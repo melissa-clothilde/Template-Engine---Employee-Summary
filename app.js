@@ -5,13 +5,25 @@ const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
 
+const employeeArr = [];
+
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-writeFileAsync = util.promisify(fs.writeFile);
 // // Write code to use inquirer to gather information about the development team members,
+function createTeam (end = false) {
+    if (end) {
+        fs.writeFile(outputPath, render(employeeArr), function() {
+            console.log("Success!")
+        });
+    }
+    
+    else {
+        fs.writeFile(outputPath, render(employeeArr), promptUser);
+    }
+};
 
 function promptUser() {
     return inquirer.prompt([
@@ -19,10 +31,11 @@ function promptUser() {
             type: "list",
             name: "team",
             message: "Which employee will be added?",
-            choices: ["Add Manager", "Add Engineer", "Add Intern"]
+            choices: ["Add Manager", "Add Engineer", "Add Intern", "Quit"]
         },
     ]).then(function (userChoice) {
-        //Use switch and pass in info gathered by user by name team. If there is a match with one of user choices, select that choice and execute that block of code
+        //Use switch and pass in info gathered by user by name team. If there is a match with one of user choices, select that choice and execute that block of code 
+        // and to create objects for each team member (using the correct classes as blueprints!)
         switch (userChoice.team) {
             case "Add Manager":
                 addManager();
@@ -37,6 +50,7 @@ function promptUser() {
                 break;
 
             default:
+                createTeam(true);
                 break;
         }
     });
@@ -65,6 +79,8 @@ function promptUser() {
             },
         ]).then(function (userInput) {
             let thisManager = new Manager(userInput.name, userInput.id, userInput.email, userInput.office);
+            employeeArr.push(thisManager);
+            createTeam();
         })
     }
 
@@ -92,6 +108,8 @@ function promptUser() {
             },
         ]).then(function (userInput) {
             let thisEngineer = new Engineer(userInput.name, userInput.id, userInput.email, userInput.github);
+            employeeArr.push(thisEngineer);
+            createTeam();
         })
     }
 
@@ -119,24 +137,17 @@ function promptUser() {
             },
         ]).then(function (userInput) {
             let thisIntern= new Intern(userInput.name, userInput.id, userInput.email, userInput.school);
+            employeeArr.push(thisIntern);
+            createTeam();
         })
     }    
 }
-    // and to create objects for each team member (using the correct classes as blueprints!)
-    // const Manager = [
-    //     {
-    //         name: "",
-    //         id: number,
-    //         email: "",
-    //         office: number,
-    //     },
-    // ];
 
+promptUser();
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
-
 // After you have your html, you're now ready to create an HTML file using the HTML
 // returned from the `render` function. Now write it to a file named `team.html` in the
 // `output` folder. You can use the variable `outputPath` above target this location.
