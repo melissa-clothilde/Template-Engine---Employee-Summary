@@ -11,8 +11,127 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 
 writeFileAsync = util.promisify(fs.writeFile);
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
+// // Write code to use inquirer to gather information about the development team members,
+
+function promptUser() {
+    return inquirer.prompt([
+        {
+            type: "list",
+            name: "team",
+            message: "Which employee will be added?",
+            choices: ["Add Manager", "Add Engineer", "Add Intern"]
+        },
+    ]).then(function (userChoice) {
+        //Use switch and pass in info gathered by user by name team. If there is a match with one of user choices, select that choice and execute that block of code
+        switch (userChoice.team) {
+            case "Add Manager":
+                addManager();
+                break;
+
+            case "Add Engineer":
+                addEngineer();
+                break;
+
+            case "Add Intern":
+                addIntern();
+                break;
+
+            default:
+                break;
+        }
+    });
+
+    function addManager() {
+        return inquirer.prompt([
+            {
+                type: "input",
+                name: "name",
+                message: "Manager's name?",
+            },
+            {
+                type: "number",
+                name: "id",
+                message: "Manager's id?",
+            },
+            {
+                type: "input",
+                name: "email",
+                message: "Manager's email?",
+            },
+            {
+                type: "number",
+                name: "office",
+                message: "Manager's office number?",
+            },
+        ]).then(function (userInput) {
+            let thisManager = new Manager(userInput.name, userInput.id, userInput.email, userInput.office);
+        })
+    }
+
+    function addEngineer() {
+        return inquirer.prompt([
+            {
+                type: "input",
+                name: "name",
+                message: "Engineer's name?",
+            },
+            {
+                type: "number",
+                name: "id",
+                message: "Engineer's id?",
+            },
+            {
+                type: "input",
+                name: "email",
+                message: "Engineer's email?",
+            },
+            {
+                type: "input",
+                name: "github",
+                message: "Engineer's github?",
+            },
+        ]).then(function (userInput) {
+            let thisEngineer = new Engineer(userInput.name, userInput.id, userInput.email, userInput.github);
+        })
+    }
+
+    function addIntern() {
+        return inquirer.prompt([
+            {
+                type: "input",
+                name: "name",
+                message: "Intern's name?",
+            },
+            {
+                type: "number",
+                name: "id",
+                message: "Intern's id?",
+            },
+            {
+                type: "input",
+                name: "email",
+                message: "Intern's email?",
+            },
+            {
+                type: "input",
+                name: "school",
+                message: "Intern's school?",
+            },
+        ]).then(function (userInput) {
+            let thisIntern= new Intern(userInput.name, userInput.id, userInput.email, userInput.school);
+        })
+    }    
+}
+    // and to create objects for each team member (using the correct classes as blueprints!)
+    // const Manager = [
+    //     {
+    //         name: "",
+    //         id: number,
+    //         email: "",
+    //         office: number,
+    //     },
+    // ];
+
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
